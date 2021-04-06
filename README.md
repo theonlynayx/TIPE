@@ -1,4 +1,4 @@
-# TIPE🐱‍💻
+# TIPE🐱‍💻 ~ OSINT
 💡 Ce programme permet de:
 - Extraire des informations supplémentaires du profil et dest posts (connecté à une page Facebook, compte Business, rejoint Instagram récemment...)
 - Télécharger les posts disponibles (Photo ou vidéo et section commentaire)
