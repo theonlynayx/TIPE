@@ -343,5 +343,10 @@ def main(username):
     Load.start()
     Insta.start()
     Insta.join()
-
-    return que.get()
+    
+    RetData = que.get()
+    with open("{}.json".format(username),'w') as f:
+        json.dump(RetData,f,sort_keys = True, indent = 4)
+        f.close()
+        
+    return RetData
