@@ -13,7 +13,7 @@ UserAgent =  [
 
 headers = {"user-Agent": choice(UserAgent),'referer':'https://www.google.com/',"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp",}
 
-cookies={'sessionid' : '6051903176%3AucWY8YSS8FBRKm%3A21'}
+cookies={}
 
 DorkList = {
     'InstaText' : 'https://www.google.com/search?q=intext%3A%27{}%27+site%3A%27www.instagram.com%27',
