@@ -100,7 +100,7 @@ def AnalyzePosts(username,NofPostAvailable,InfosPosts,NofPostToAnalyze,NofPostTo
                     ret['Posts'][index]['Vid'] = "Post{}_{}_.mp4".format(username,index + 1)
                 else:
                     GetPicsAndVid(InfosPosts[index]['node']['display_url'],"Post{}_{}.jpg".format(username,index + 1))
-                    ret['Posts'][index]['Pic'] = "Post{}_{}_.mp4".format(username,index + 1)
+                    ret['Posts'][index]['Pic'] = "Post{}_{}_.jpg".format(username,index + 1)
             NofPostToDownload -= 1
 
         # Calling ScrapeComment() if comments are available and asked by user
