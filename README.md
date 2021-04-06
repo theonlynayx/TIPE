@@ -1,5 +1,5 @@
 # TIPE🐱‍💻
-Ce programme permet de:
+Notre programme permet de:
 - Extraire des informations supplémentaires du profil et dest posts (connecté à une page Facebook, compte Business, rejoint Instagram récemment...)
 - Télécharger les posts disponibles (Photo ou vidéo et section commentaire)
 - Télécharger les Stories (nécessite d'ajouter un compte)
