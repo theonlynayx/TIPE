@@ -344,5 +344,4 @@ def main(username):
     Insta.start()
     Insta.join()
 
-    with open('test.json','w') as f:
-        json.dump(que.get(),f,sort_keys=True,indent=4)
+    return que.get()
