@@ -1,4 +1,5 @@
 from OSINT.GetInsta import main
+from tkinter import *
 
 if __name__ == "__main__":
-    main(input("Username:"))
+    data = main(input("Username:"))
