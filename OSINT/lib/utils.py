@@ -47,6 +47,7 @@ def GetPicsAndVid(url,filename):
             f.close()
             return True
         except:
+            f.close()
             return False
 
 # Sort list by frequency and remove duplicate
