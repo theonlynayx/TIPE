@@ -3,6 +3,7 @@ import requests
 import threading
 from OSINT.lib.colors import *
 from OSINT.lib.utils import *
+𝑻𝒆𝒙𝒕 𝑭𝒂𝒏𝒄𝒚
 from OSINT.config import *
 import json
 import sys
