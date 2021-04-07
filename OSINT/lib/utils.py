@@ -8,20 +8,7 @@ import requests
 import sys
 import os
 
-def MakeAChoice(string):
-    while True:
-        sys.stdout.write(f"{HEADER}[?] {string} [Y/N]{END}")
-        sys.stdout.flush()
-        inpt = sys.stdin.readline()
-        if inpt.replace("\n","") == "Y":
-            sys.stdout.write(StrClear.replace("\n",""))
-            return True
-        elif inpt.replace("\n","") == "N":
-            sys.stdout.write(StrClear.replace("\n",""))
-            return False
-        sys.stdout.write(StrClear.replace("\n",""))
-
-# Find HashTags and tagged users in caption
+# 𝑭𝒊𝒏𝒅 𝑯𝒂𝒔𝒉𝑻𝒂𝒈𝒔 𝒂𝒏𝒅 𝒕𝒂𝒈𝒈𝒆𝒅 𝒖𝒔𝒆𝒓𝒔 𝒊𝒏 𝒄𝒂𝒑𝒕𝒊𝒐𝒏
 
 def ExtractThroughCaption(Finder,caption):
     ResultList = []
@@ -50,7 +37,7 @@ def GetPicsAndVid(url,filename):
             f.close()
             return False
 
-# Sort list by frequency and remove duplicate
+# 𝑺𝒐𝒓𝒕 𝒍𝒊𝒔𝒕 𝒃𝒚 𝒇𝒓𝒆𝒒𝒖𝒆𝒏𝒄𝒚 𝒂𝒏𝒅 𝒓𝒆𝒎𝒐𝒗𝒆 𝒅𝒖𝒑𝒍𝒊𝒄𝒂𝒕𝒆
 
 def sorting(ListToSort):
     ListSorted = sorted(ListToSort, key = ListToSort.count,reverse = True) 
@@ -58,26 +45,15 @@ def sorting(ListToSort):
     return ListSorted
 
 def fail(message):
-    print(StrClear)
     print(f"{FAIL}{message}{END}")
     os._exit(1)
 
-# animation pimp af
+# Fonction à remplacer par un logo de chargement si Sacha se dépêche héhé ^^
 
-def loading(waiter,color,WaitingString):
+def loading(waiter):
 
-    ClockList = ["\U0001F55B","\U0001F550","\U0001F551","\U0001F552","\U0001F553","\U0001F554",
-                    "\U0001F555","\U0001F556","\U0001F557","\U0001F558","\U0001F559","\U0001F55a"]
-
-    sys.stdout.write(color + f"[*] {WaitingString}: ")
-    sys.stdout.flush()
-    ClockCycle = itertools.cycle(ClockList)
     while waiter.isSet() == False:
-        sys.stdout.write('\b' * 2)
-        sys.stdout.write(next(ClockCycle))
-        sys.stdout.flush()
-        sleep(0.05)
-    sys.stdout.write(END)
+        pass
     sys.exit()
 
 def CreateFolder(UserName):
