@@ -52,13 +52,13 @@ def UseGoogleDorks(username,ret):
         ]
 
     Devent = threading.Event()
-    Dload = threading.Thread(target=loading,args=(Devent,MAGENTA,"Collecting dorks data..."))
+    Dload = threading.Thread(target=loading,args=(Devent,))
     Dload.start()
 
     [t.start() for t in Tlist]
     [t.join() for t in Tlist]
 
-    # Registering the first dork : InstaText
+    # 𝑹𝒆𝒈𝒊𝒔𝒕𝒆𝒓𝒊𝒏𝒈 𝒕𝒉𝒆 𝒇𝒊𝒓𝒔𝒕 𝒅𝒐𝒓𝒌 : 𝑰𝒏𝒔𝒕𝒂𝑻𝒆𝒙𝒕
 
     for i in RespInstaText:
         if username in i or 'instagram.com' not in i:
@@ -83,7 +83,7 @@ def UseGoogleDorks(username,ret):
         for i in list(dict.fromkeys(AccountList)):
             ret['Dorks']['AccountList'].append(i)
 
-    # Registering the second dork : GlobalUrl
+    # 𝑹𝒆𝒈𝒊𝒔𝒕𝒆𝒓𝒊𝒏𝒈 𝒕𝒉𝒆 𝒔𝒆𝒄𝒐𝒏𝒅 𝒅𝒐𝒓𝒌 : 𝑮𝒍𝒐𝒃𝒂𝒍𝑼𝒓𝒍
 
     for i in list(RespAllUrl):
         if 'www.instagram.com' in i:
@@ -93,7 +93,7 @@ def UseGoogleDorks(username,ret):
         for j in RespAllUrl:
             ret['Dorks']['RespAllUrl'].append(j)
     
-    # Registering the third dork : GlobalText
+    # 𝑹𝒆𝒈𝒊𝒔𝒕𝒆𝒓𝒊𝒏𝒈 𝒕𝒉𝒆 𝒕𝒉𝒊𝒓𝒅 𝒅𝒐𝒓𝒌 : 𝑮𝒍𝒐𝒃𝒂𝒍𝑻𝒆𝒙𝒕
     
     for i in list(RespAllText):
         if 'www.instagram.com' in i:
@@ -102,5 +102,3 @@ def UseGoogleDorks(username,ret):
     if RespAllText:
         for j in RespAllText:
             ret['Dorks']['RespAllText'].append(j)
-    
-    print(StrClear)
