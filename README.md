@@ -1,6 +1,6 @@
 # TIPE🐱‍💻
 Notre programme permet de:
-- Extraire des informations supplémentaires du profil et dest posts (connecté à une page Facebook, compte Business, rejoint Instagram récemment...)
+- Extraire des informations supplémentaires du profil et dest posts (connecté à une page Facebook, compte Business, rejoint Instagram récemment, heures précises de posts...)
 - Télécharger les posts disponibles (Photo ou vidéo et section commentaire)
 - Télécharger les Stories (nécessite d'ajouter un compte)
 - Élaborer un classement des contacts récurrents en se basant sur les posts
