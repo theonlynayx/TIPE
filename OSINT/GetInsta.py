@@ -8,17 +8,15 @@ from OSINT.lib.utils import *
 from time import sleep
 import datetime as dt
 from OSINT.config import *
-import threading
 import itertools
 import requests
 import signal
-import queue
 import json
 import sys
 import os
 import re
 
-def GetStories(username,user_id,Glauncher):
+def GetStories(username,user_id):
     
     # 𝑭𝒂𝒌𝒆 𝑼𝒔𝒆𝒓 𝑨𝒈𝒆𝒏𝒕 𝒕𝒐 𝒂𝒗𝒐𝒊𝒅 𝒈𝒆𝒕𝒕𝒊𝒏𝒈 𝒕𝒉𝒆 𝒖𝒔𝒆𝒓-𝒂𝒈𝒆𝒏𝒕 𝒆𝒓𝒓𝒐𝒓
 
@@ -39,16 +37,13 @@ def GetStories(username,user_id,Glauncher):
                     story = requests.get(url)
                     f.write(story.content)
                 f.close()
-            Glauncher.set()
             ret['Story'] = "Stories_{}.*".format(username)
         except:
-            Glauncher.set()
             fail('[x] Error while downloading story...')
     else:
-        Glauncher.set()
         ret['Story'] = "No_Story_Available"
 
-def AnalyzePosts(username,NofPostAvailable,InfosPosts,NofPostToAnalyze,NofPostToDownload,OptCom,launcher):
+def AnalyzePosts(username,NofPostAvailable,InfosPosts,NofPostToAnalyze,NofPostToDownload,OptCom):
     
     global PostResult,TaggedUsersInPics
     PostResult,TaggedUsersInPics = [],[]
@@ -74,7 +69,7 @@ def AnalyzePosts(username,NofPostAvailable,InfosPosts,NofPostToAnalyze,NofPostTo
             ret['Posts'][index]['Location'] = InfosPosts[index]['node']['location']['name']
 
         if InfosPosts[index]['node']['comments_disabled'] is True or InfosPosts[index]['node']['edge_media_to_comment']['count'] == 0 :
-            ret['Posts'][index]['CommentsNumber'] = 0
+            ret['Posts'][index]['CommentsNumber'] = False
             Details = False
         else:
             ret['Posts'][index]['CommentsNumber'] = int(str(InfosPosts[index]['node']['edge_media_to_comment']['count']).replace(",",""))
@@ -102,7 +97,7 @@ def AnalyzePosts(username,NofPostAvailable,InfosPosts,NofPostToAnalyze,NofPostTo
         # 𝑪𝒂𝒍𝒍𝒊𝒏𝒈 𝑺𝒄𝒓𝒂𝒑𝒆𝑪𝒐𝒎𝒎𝒆𝒏𝒕() 𝒊𝒇 𝒄𝒐𝒎𝒎𝒆𝒏𝒕𝒔 𝒂𝒓𝒆 𝒂𝒗𝒂𝒊𝒍𝒂𝒃𝒍𝒆 𝒂𝒏𝒅 𝒂𝒔𝒌𝒆𝒅 𝒃𝒚 𝒖𝒔𝒆𝒓
 
         if Details is True :
-            if ScrapeComments(username,InfosPosts[index]['node']['shortcode'],"{}_Comments_{}.txt".format(username,index),Commenters,launcher) is False:
+            if ScrapeComments(username,InfosPosts[index]['node']['shortcode'],"{}_Comments_{}.txt".format(username,index),Commenters) is False:
                 with open("Error.txt","w") as LogError:
                     LogError.write("[Error while downloading comments]")
                 LogError.close()
@@ -123,21 +118,18 @@ def AnalyzePosts(username,NofPostAvailable,InfosPosts,NofPostToAnalyze,NofPostTo
                 TaggedUsersInPics.append(tu['node']['user']['username'])
 
         index += 1
-    launcher.set()
     return True
 
-def ScrapeComments(username,shortcode,filename,commenters,PostEvent):
+def ScrapeComments(username,shortcode,filename,commenters):
 
     # 𝑴𝒂𝒌𝒊𝒏𝒈 𝒓𝒆𝒒𝒖𝒆𝒔𝒕 𝒕𝒐 𝒕𝒉𝒆 𝒑𝒐𝒔𝒕 𝒖𝒓𝒍 𝒖𝒔𝒊𝒏𝒈 𝒉𝒊𝒔 𝒔𝒉𝒐𝒓𝒕𝒄𝒐𝒅𝒆
 
     req = requests.get(f"https://www.instagram.com/p/{shortcode}/",headers=headers,cookies=cookies)
     if req.status_code == 404:
-        PostEvent.set()
         fail("[!] Post not found")
     PostSoup = bs(req.text, 'html.parser')
     PostSoup.encode('utf-8')
     if "Login • Instagram" in str(PostSoup.find('title')):
-        PostEvent.set()
         fail("[!] Error: Filouteries have been detected, try later or use a proxy!")
 
     try:
@@ -161,7 +153,7 @@ def ScrapeComments(username,shortcode,filename,commenters,PostEvent):
         return False
     return True
 
-def GetInsta(username,launcher):
+def GetInsta(username):
 
     # 𝑱𝑺𝑶𝑵 𝒓𝒆𝒕𝒖𝒓𝒏 𝒗𝒂𝒍𝒖𝒆
 
@@ -170,7 +162,8 @@ def GetInsta(username,launcher):
         'Profile' : {},
         'Posts' : [],
         'Stats' : {},
-        'Dorks' : {}
+        'Dorks' : {},
+        'Story' : ""
     }
 
     # paramètres à implé plus tard
@@ -185,26 +178,29 @@ def GetInsta(username,launcher):
 
     WebPage = requests.get(f"https://www.instagram.com/{username}/",headers=headers,cookies=cookies)
     if WebPage.status_code == 404:
-        launcher.set()
         fail("[!] Account not found")
     Sousoupe = bs(WebPage.text, 'html.parser')
     Sousoupe.encode('utf-8')
     if "Login • Instagram" in str(Sousoupe.find('title')):
-        launcher.set()
         fail("[!] Filouteries have been detected, try later, connect to an account or use a proxy...")
     elif "Content Unavailable" in str(Sousoupe.find('title')):
-        launcher.set()
         fail("[!] The account has been blocked by user, try using without account...")
 
     # 𝑩𝒖𝒊𝒍𝒅𝒊𝒏𝒈 𝑷𝒓𝒐𝒇𝒊𝒍𝒆'𝒔 𝒇𝒐𝒍𝒅𝒆𝒓
 
-    CreateFolder(username)
+    ret['path'] = CreateFolder(username)
 
     # 𝑷𝒂𝒓𝒔𝒊𝒏𝒈 𝒂𝒈𝒂𝒊𝒏 𝒂𝒏𝒅 𝒂𝒏𝒈𝒂𝒊𝒏 :)
     
-    Main = Sousoupe.find_all('meta', attrs={'property' : 'og:description'})
-    Profile = Sousoupe.find_all('script', attrs={'type': 'text/javascript'})
-    InfosMain = Main[0].get('content').split()
+    try:
+        Main = Sousoupe.find_all('meta', attrs={'property' : 'og:description'})
+        Profile = Sousoupe.find_all('script', attrs={'type': 'text/javascript'})
+        InfosMain = Main[0].get('content').split()
+    except IndexError:
+        print("ERROR ERROR ERROR")
+        with open("log.txt","w") as f:
+            f.write(WebPage.text)
+            os._exit()
     InfosProfile = json.loads(Profile[3].get_text()[str(Profile[3].get_text()).find("{\"config"):].strip(';'))
     InfosUser = InfosProfile['entry_data']['ProfilePage'][0]['graphql']['user']    
     InfosPosts = InfosProfile['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges']
@@ -214,11 +210,10 @@ def GetInsta(username,launcher):
         ProfileName = re.search('from (.*) \(@',Main[0].get('content')).group(1)
     except AttributeError:
         ProfileName = None
-        ret['Profile']['ProfileName'] = False
-    launcher.set()
+        ret['Profile']['Profile Name'] = False
 
     if ProfileName:
-        ret['Profile']['ProfileName'] = ProfileName
+        ret['Profile']['Profile Name'] = ProfileName
 
     ret['Profile']['Followers'] = InfosMain[0]
     ret['Profile']['Following'] = InfosMain[2]
@@ -233,23 +228,27 @@ def GetInsta(username,launcher):
     if GetPicsAndVid(InfosUser['profile_pic_url_hd'],"ProfilePic_{}.jpg".format(username)) is False:
         fail("[!] Error while downloading profile picture")
     else:
-        ret['Profile']['ProfilePic'] = "ProfilePic_{}.jpg".format(username)
+        convertImg("ProfilePic_{}.jpg".format(username))
+        ret['Profile']['ProfilePic'] = "ProfilePic_{}.png".format(username)
+
+    # 𝑬𝒙𝒕𝒓𝒂𝒄𝒕 𝒈𝒆𝒏𝒆𝒓𝒂𝒍 𝒊𝒏𝒇𝒐𝒓𝒎𝒂𝒕𝒊𝒐𝒏𝒔
+
+    ret['Profile']['Private'] = InfosUser['is_private']
+    ret['Profile']['Joined Recently'] = InfosUser['is_joined_recently']
+    ret['Profile']['IsBusiness'] = InfosUser['is_business_account']
+    ret['Profile']['Verified'] = InfosUser['is_verified']
+    ret['Profile']['Username'] = username
 
     # 𝑬𝒙𝒕𝒓𝒂𝒄𝒕 𝒐𝒑𝒕𝒊𝒐𝒏𝒂𝒍 𝒊𝒏𝒇𝒐𝒓𝒎𝒂𝒕𝒊𝒐𝒏𝒔
 
-    ret['Profile']['IsPrivate'] = InfosUser['is_private']
-    ret['Profile']['IsJoinedRecently'] = InfosUser['is_joined_recently']
-    ret['Profile']['IsBusiness'] = InfosUser['is_business_account']
-    ret['Profile']['IsVerified'] = InfosUser['is_verified']
-
     if ret['Profile']['IsBusiness']:
-        ret['Profile']['BusinessCategory'] = InfosUser['business_category_name']
+        ret['Profile']['Category'] = InfosUser['business_category_name']
 
     if InfosUser['external_url']:
-        ret['Profile']['ExternalUrl'] = InfosUser['external_url']
+        ret['Profile']['Url'] = InfosUser['external_url']
 
     if InfosUser['connected_fb_page']:
-        ret['Profile']['FaceBookPage'] = InfosUser['connected_fb_page']
+        ret['Profile']['FaceBook Page'] = InfosUser['connected_fb_page']
 
     # 𝑰𝒇 𝒖𝒔𝒆𝒓'𝒔 𝒂𝒄𝒄𝒐𝒖𝒏𝒕 𝒊𝒔 𝒑𝒖𝒃𝒍𝒊𝒄 _@_°\/°
 
@@ -264,17 +263,8 @@ def GetInsta(username,launcher):
         HashTagsList = []
         Commenters = []
         TaggedUsers = []
-        PostEvent = threading.Event()
 
-        PostLoad = threading.Thread(target=loading,args=(PostEvent,))
-        Post = threading.Thread(target=AnalyzePosts,args=(username,InfosMain[4],InfosPosts,NofPostToAnalyze,NofPostToDownload,OptCom,PostEvent))
-        PostLoad.start()
-        Post.start()
-
-        # 𝑾𝒂𝒊𝒕 𝒖𝒏𝒕𝒊𝒍 𝒑𝒐𝒔𝒕𝒔 𝒂𝒏𝒂𝒍𝒚𝒔𝒊𝒔 𝒊𝒔 𝒐𝒗𝒆𝒓
-
-        while PostEvent.isSet() is False:
-            pass
+        AnalyzePosts(username,InfosMain[4],InfosPosts,NofPostToAnalyze,NofPostToDownload,OptCom)
 
         FinalHTList = list(itertools.chain.from_iterable(HashTagsList))
 
@@ -299,42 +289,28 @@ def GetInsta(username,launcher):
             ret['Stats']['TaggedUsers'] = FinalTUListSorted
             
     if DownloadStory is True and cookies:
-        GEvent = threading.Event()
-        GStory = threading.Thread(target=GetStories,args=(username,UserId,GEvent))
-        GLoad = threading.Thread(target=loading,args=(GEvent,))
-        GLoad.start()
-        GStory.start()
-
-        while GEvent.isSet() is False:
-            pass
-
+        GetStories(username,UserId)
+        
     # 𝑼𝒔𝒊𝒏𝒈 𝑮𝒐𝒐𝒈𝒍𝒆 𝒅𝒐𝒓𝒌𝒊𝒏𝒈
 
     if UseDork is True:
-
+        """
         ret['Dorks']['RespAllUrl'] = []
         ret['Dorks']['InstaText'] = []
         ret['Dorks']['RespAllText'] = []
         ret['Dorks']['AccountList'] = []
+        """
 
         UseGoogleDorks(username,ret)
 
     return ret
             
-def main(username):
+def main(username,xavier):
 
-    que = queue.Queue()
-    event = threading.Event()
-    Insta = threading.Thread(target= lambda q,arg1,arg2 : q.put(GetInsta(arg1,arg2)),args=(que,username,event))
-    Load = threading.Thread(target=loading,args=(event,))
-    
-    Load.start()
-    Insta.start()
-    Insta.join()
-    
-    RetData = que.get()
+    RetData = GetInsta(username)
     with open("{}.json".format(username),'w') as f:
         json.dump(RetData,f,sort_keys=True,indent=4)
         f.close()
 
+    xavier.set()
     return RetData
