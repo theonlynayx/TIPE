@@ -51,10 +51,6 @@ def UseGoogleDorks(username,ret):
         threading.Thread(target=DorkRequest,args=(username,DorkList['InstaText'],RespInstaText)),
         ]
 
-    Devent = threading.Event()
-    Dload = threading.Thread(target=loading,args=(Devent,))
-    Dload.start()
-
     [t.start() for t in Tlist]
     [t.join() for t in Tlist]
 
@@ -73,13 +69,13 @@ def UseGoogleDorks(username,ret):
             UrlContent = re.search('www.instagram.com/(.*)/',i)
             AccountList.append(UrlContent.group(1))
 
-    Devent.set()
-
     if PostList:
+        ret['Dorks']['InstaText'] = []
         for j in list(dict.fromkeys(PostList)):
             ret['Dorks']['InstaText'].append("{} ~ {}".format(j[0],j[1]))
             
     if AccountList:
+        ret['Dorks']['AccountList'] = []
         for i in list(dict.fromkeys(AccountList)):
             ret['Dorks']['AccountList'].append(i)
 
@@ -90,6 +86,7 @@ def UseGoogleDorks(username,ret):
             RespAllUrl.remove(i)
 
     if RespAllUrl:
+        ret['Dorks']['RespAllUrl'] = []
         for j in RespAllUrl:
             ret['Dorks']['RespAllUrl'].append(j)
     
@@ -100,5 +97,6 @@ def UseGoogleDorks(username,ret):
             RespAllText.remove(i)
             
     if RespAllText:
+        ret['Dorks']['RespAllText'] = []
         for j in RespAllText:
             ret['Dorks']['RespAllText'].append(j)
