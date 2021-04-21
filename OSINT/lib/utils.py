@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup as bs
 from collections import OrderedDict
 from OSINT.lib.colors import *
 from OSINT.config import *
+from PIL import Image
 from time import sleep
 import itertools
 import requests
@@ -51,9 +52,9 @@ def fail(message):
 # Fonction à remplacer par un logo de chargement si Sacha se dépêche héhé ^^
 
 def loading(waiter):
-
     while waiter.isSet() == False:
-        pass
+        print("WAIT")
+        sleep(2)
     sys.exit()
 
 def CreateFolder(UserName):
@@ -68,6 +69,7 @@ def CreateFolder(UserName):
     os.chdir("Profiles")
     os.mkdir(FolderName)
     os.chdir(FolderName)
+    return "Profiles/" + FolderName
 
     
 def InsertLines(filename,index,text):
@@ -79,4 +81,7 @@ def InsertLines(filename,index,text):
     with open(filename,"wb") as f:
         f.write(b"".join(a))
         f.close()
-    
+
+def convertImg(path):
+    img = Image.open(path)
+    img.save(path.replace('.jpg','.png'))
